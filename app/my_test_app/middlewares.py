@@ -1,8 +1,22 @@
 from aiohttp import web
-from pydantic import BaseModel
-from aiohttp_pydantic import PydanticView
+from aiohttp_auth.autz.policy import acl
 from app.my_test_app.db_handlers import login
-from aiohttp_basicauth import BasicAuthMiddleware
+
+
+class ACLAutzPolicy(acl.AbstractACLAutzPolicy):
+    def __init__(self, context=None):
+        super().__init__(context)
+
+    async def acl_groups(self, user_identity):
+        user_data = await login(user_identity)
+        privilege = user_data.get("privilege", None)
+
+        if privilege is None:
+            # return empty tuple in order to give a chance
+            # to Group.Everyone
+            return tuple()
+
+        return privilege,
 
 
 @web.middleware

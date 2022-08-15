@@ -1,10 +1,9 @@
 aiohttp == 3.8.1
 aiohttp-pydantic == 1.12.2
-aiohttp-basicauth == 1.0.0
+aiohttp-auth-autz == 0.2.2
 sqlalchemy == 1.4.40
 asyncpg == 0.26.0
 pyyaml == 6.0
 alembic == 1.8.1
 pydantic == 1.9.2
-aiohttp-security == 0.4.0
-bcrypt == 3.2.2
+

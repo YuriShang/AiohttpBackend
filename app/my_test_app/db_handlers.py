@@ -1,23 +1,17 @@
-import asyncio
-import json
 from datetime import datetime
 
-import sqlalchemy
-from sqlalchemy import union
 from sqlalchemy.future import select
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, joinedload, selectinload
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.settings import config
 from app.my_test_app.models import users, user_privileges
 
 DATABASE_URL = config["postgres"]["database_url"]
 
-engine = create_async_engine(DATABASE_URL, future=True, echo=True)
-async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+engine = create_async_engine(DATABASE_URL, future=True, echo=False)
 
 
-async def login(request, username, password):
+async def login(username):
     login_data = {"login": '', "password": '', "privilege": '', "blocked": False}
 
     async with engine.begin() as conn:
