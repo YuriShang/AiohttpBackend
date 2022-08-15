@@ -3,7 +3,6 @@ from aiohttp import web
 from os import urandom
 import aiohttp_auth
 from aiohttp_auth.permissions import Permission
-from asyncpg.exceptions import UniqueViolationError
 
 from app.settings import config
 from app.my_test_app.routes import setup_routes as setup_app_routes
@@ -12,6 +11,7 @@ from app.my_test_app.db.db_handlers import get_user, create_user
 from app.my_test_app.db.models import admin_user
 
 
+# Пользователи и их привилегии
 context = [
            (Permission.Allow, 'readonly', {'read', }),
            (Permission.Deny, 'readonly', {'create', 'update', 'delete', 'block'}),
@@ -28,11 +28,13 @@ def setup_config(application):
     application["config"] = config
 
 
+# Настраиваем приложение
 def setup_app(application):
     setup_config(application)
     setup_routes(application)
 
 
+# Инициализируем приложение
 def init_app(loop):
     app = web.Application()
 
@@ -61,4 +63,5 @@ if __name__ == "__main__":
         loop.run_until_complete(create_user(admin_user))
         print("Учетная запись 'admin' с привилегиями 'admin' успешно создана")
 
+    # Запускаем сервер
     web.run_app(app, port=config["common"]["port"], loop=loop)
