@@ -9,3 +9,4 @@ def setup_routes(app):
     app.router.add_get("/read", views.read)
     app.router.add_post("/update", views.update)
     app.router.add_post("/block", views.block)
+    app.router.add_post("/delete", views.delete)

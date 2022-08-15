@@ -1,12 +1,14 @@
 import asyncio
 
-from sqlalchemy.ext.asyncio import async_engine_from_config
+from sqlalchemy.ext.asyncio import create_async_engine
 from logging.config import fileConfig
 
 from sqlalchemy import pool
 
 from alembic import context
-from app.my_test_app.models import metadata_obj
+from app.my_test_app.db.models import metadata_obj
+from app.my_test_app.db.db_handlers import create_user
+from app.settings import config as app_config
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -41,7 +43,8 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    # url = config.get_main_option("sqlalchemy.url")
+    url = app_config["postgres"]["database_url"]
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -67,10 +70,8 @@ async def run_migrations_online():
     and associate a connection with the context.
 
     """
-    connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
+    connectable = create_async_engine(
+        app_config["postgres"]["database_url"]
     )
 
     async with connectable.connect() as connection:

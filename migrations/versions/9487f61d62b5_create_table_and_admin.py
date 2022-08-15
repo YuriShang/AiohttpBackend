@@ -1,8 +1,8 @@
-"""create tables
+"""create table and admin
 
-Revision ID: da95d0c5ac43
+Revision ID: 9487f61d62b5
 Revises: 
-Create Date: 2022-08-14 18:48:46.125871
+Create Date: 2022-08-15 23:41:14.117266
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'da95d0c5ac43'
+revision = '9487f61d62b5'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,7 +29,7 @@ def upgrade() -> None:
     )
     op.create_table('user_privileges',
     sa.Column('login', sa.String(), nullable=False),
-    sa.Column('privilege', sa.String(), nullable=False),
+    sa.Column('privileges', sa.String(), nullable=False),
     sa.Column('block', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['login'], ['users.login'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('login')

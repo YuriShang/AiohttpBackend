@@ -1,12 +1,12 @@
 from aiohttp import web
-from app.my_test_app.db_handlers import read_users, create_user, update_user, delete_user, login, block_user
+from app.my_test_app.db.db_handlers import read_users, create_user, update_user, \
+                                           delete_user, login, block_user, unblock_user
 
-from aiohttp_auth import auth, autz
+from aiohttp_auth import auth
 from aiohttp_auth.auth import auth_required
 from aiohttp_auth.autz import autz_required
 
 
-@autz_required('view')
 def index_handler(request):
     return web.Response(
         text='<h1>Hello!</h1>',
@@ -21,22 +21,24 @@ async def log_in(request):
     user_data = await login(user)
 
     if user == user_data["login"] and password == user_data['password']:
-        # remember user identity
         await auth.remember(request, user)
-        return web.Response(text='Ok')
+        return web.Response(text=f"User '{user}' was logged in!")
 
-    raise web.HTTPUnauthorized()
+    return web.Response(text='Wrong username or password',
+                        status=401)
 
 
 @auth_required
 async def log_out(request):
+    "Надо откуда-то взять имя пользователя;)"
     await auth.forget(request)
-    return web.Response(text='Ok')
+    return web.Response(text=f"User '' was logged out!")
 
 
+@autz_required('read')
 async def read(request):
     users = await read_users()
-    return web.Response(text=str(users))
+    return web.Response(text=users)
 
 
 @autz_required('create')
@@ -49,15 +51,22 @@ async def create(request):
 
 @autz_required('update')
 async def update(request):
-    await update_user(request)
+    response = await update_user(request)
+    return web.Response(text=response)
 
 
 @autz_required('delete')
 async def delete(request):
-    await delete_user(request)
+    response = await delete_user(request)
+    return web.Response(text=response)
 
 
 @autz_required('block')
 async def block(request):
     await block_user(request)
+
+
+@autz_required('unblock')
+async def unblock(request):
+    await unblock_user(request)
 
