@@ -1,8 +1,11 @@
+from datetime import datetime
 from sqlalchemy import Table, Column, String, DateTime, Boolean, ForeignKey
 from sqlalchemy import MetaData
 
+
 # Метаданные для alembic
 metadata_obj = MetaData()
+
 
 # Модель пользователя
 users = Table('users', metadata_obj,
@@ -13,6 +16,7 @@ users = Table('users', metadata_obj,
               Column('birthday', DateTime, nullable=False),
               )
 
+
 # Модель привилегий
 user_privileges = Table('user_privileges', metadata_obj,
                         Column('login', String,  ForeignKey("users.login", ondelete="CASCADE"), primary_key=True),
@@ -20,11 +24,13 @@ user_privileges = Table('user_privileges', metadata_obj,
                         Column('block', Boolean, default=False, nullable=False),
                         )
 
-# Учетка админа
+
+# Учетка админа, создается при развертывании приложения
 admin_user = {
     "login": "admin",
     "name": "admin",
     "password": "admin",
-    "birthday": "01.01.1970",
-    "privileges": "admin"
+    "birthday": datetime(1970, 1, 1),
+    "privileges": "admin",
+    "block": False
 }
