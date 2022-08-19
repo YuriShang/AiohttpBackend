@@ -1,24 +1,22 @@
-from aiohttp_auth.autz.policy import acl
-from app.my_test_app.db.db_handlers import login
+from aiohttp import web
+
+from json import JSONDecodeError
 
 
-class ACLAutzPolicy(acl.AbstractACLAutzPolicy):
+@web.middleware
+async def json_handler(request, handler):
     """
-    Класс обрабатывает привилегии пользователей
+    Проверяем входящий JSON на валидность
     """
-    def __init__(self, context=None):
-        super().__init__(context)
+    if request.path in "/login/read/logout":
+        return await handler(request)
+    elif request.path in "/create/update/block/unblock/delete":
+        try:
+            await request.json()
+            return await handler(request)
+        except JSONDecodeError as err:
+            message = f"{err.msg}: line {err.lineno} column {err.colno} (char {err.pos})"
+            return web.json_response({'error': message})
+    else:
+        return web.Response(text="404: Not Found", status=404)
 
-    async def acl_groups(self, user_identity):
-        """
-        Функция возвращает привилегии пользователя после успешной аутентификации
-        """
-        user_data = await login(user_identity)
-        privilege = user_data.get("privileges", None)
-
-        if privilege is None:
-            return tuple()
-
-        if not user_data["blocked"]:
-            return privilege,
-        return "blocked",
