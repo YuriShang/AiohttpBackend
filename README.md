@@ -61,5 +61,5 @@
       }
    ```
     
- 8) выйти из системы `(POST)` - `host:port/logout`
+ 8) Выйти из системы `(POST)` - `host:port/logout`
   
